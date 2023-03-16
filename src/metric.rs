@@ -508,7 +508,10 @@ where
 
     pub fn sort_timer(&mut self) {
         if let MetricValue::Timer(ref mut agg) = self.value {
-            agg.sort_unstable_by(|ref v1, ref v2| v1.partial_cmp(v2).unwrap());
+            agg.sort_unstable_by(|ref v1, ref v2| v1.partial_cmp(v2).unwrap_or_else(|| {
+                println!("Previously had a panic here: {:#?} and {:#?}", v1, v2);
+                return std::cmp::Ordering::Equal;
+            }));
         }
     }
 
